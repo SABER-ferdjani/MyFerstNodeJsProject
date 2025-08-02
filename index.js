@@ -6,9 +6,9 @@ app.use(express.json());
 
 const mongoose = require("mongoose");
 
-const Article = require("./models/Article");
+const Article = require("./moduls/Article");
 
-mongoose.connect("mongodb+srv://saburu:28032005@myferstdatabase.auruyz0.mongodb.net/?retryWrites=true&w=majority&appName=MyFerstDataBase")
+mongoose.connect("mongodb+srv://saburu:28032005@myferstdatabase.luc787a.mongodb.net/?retryWrites=true&w=majority&appName=MyFerstDataBase")
 .then(() => {
     console.log("connected successfully")
 }).catch((error) => {
@@ -60,13 +60,43 @@ app.get("/TotalOfName" , (req,res) => {
     res.send(`my name is ${req.body.name} and i am ${req.query.age} yers old`);
 });
 //التعامل مع اضهار البيانات 
-app.get("/html" ,(req,res) => {
+app.post("/html" ,(req,res) => {
     res.render("html-fail.ejs" , {
         name:"saber",
         age:"20",
         un:"eloued"
     })
 });
+//الحفظ في قواهد البيانات 
+app.post("/save" ,async (req,res) => {
+    const name = req.body.name ;
+    const age = req.body.age ;
+    const un = req.body.un ;
+    const newarticle = new Article();
+    newarticle.name = name ;
+    newarticle.age = age ;
+    newarticle.un = un ;
+
+    await newarticle.save();
+
+
+
+    res.send("the new article has been save");
+
+});
+
+//اخراج بيانات 
+app.get("/get" ,async (req,res) => {
+    try{const articles = await Article.find();
+    res.render("article.ejs" , {
+        allArticle : articles 
+    });
+}catch{
+ console.log("error");
+};
+    
+});
+
 
 app.listen(3000, () => {
    
